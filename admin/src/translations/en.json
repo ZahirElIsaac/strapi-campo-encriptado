@@ -1,0 +1,13 @@
+{
+  "encrypted-field.label": "Encrypted Text",
+  "encrypted-field.description": "Text field that is automatically encrypted with AES-256-GCM",
+  "encrypted-field.placeholder": "Enter text to encrypt...",
+  "encrypted-field.options.advanced.settings": "Settings",
+  "encrypted-field.options.required.label": "Required field",
+  "encrypted-field.options.required.description": "You won't be able to save without this field",
+  "encrypted-field.options.private.label": "Private field",
+  "encrypted-field.options.private.description": "This field will not be returned by the API",
+  "encrypted-field.options.advanced.regex": "Validation",
+  "encrypted-field.options.regex.label": "RegEx pattern",
+  "encrypted-field.options.regex.description": "Validation pattern before encryption"
+}

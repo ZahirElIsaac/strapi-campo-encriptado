@@ -1,0 +1,56 @@
+{
+  "name": "@growy/strapi-plugin-encrypted-field",
+  "version": "1.0.0",
+  "description": "Campo personalizado de texto cifrado para Strapi",
+  "strapi": {
+    "name": "encrypted-field",
+    "displayName": "Encrypted Field",
+    "description": "Agrega un campo de texto cifrado con AES-256-GCM",
+    "kind": "plugin"
+  },
+  "dependencies": {},
+  "peerDependencies": {
+    "@strapi/strapi": "^5.0.0"
+  },
+  "main": "server/index.js",
+  "author": {
+    "name": "Growy AI",
+    "email": "support@growy.ai",
+    "url": "https://getgrowy.ai"
+  },
+  "contributors": [
+    {
+      "name": "Zahir Elisaac",
+      "email": "zahir@growy.ai"
+    }
+  ],
+  "engines": {
+    "node": ">=18.0.0 <=22.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT",
+  "keywords": [
+    "strapi",
+    "strapi-plugin",
+    "encryption",
+    "aes-256-gcm",
+    "security",
+    "custom-field",
+    "encrypted-field",
+    "growy-ai",
+    "data-protection",
+    "cryptography",
+    "strapi-v5"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/growy-ai/strapi-plugin-encrypted-field.git"
+  },
+  "bugs": {
+    "url": "https://github.com/growy-ai/strapi-plugin-encrypted-field/issues"
+  },
+  "homepage": "https://github.com/growy-ai/strapi-plugin-encrypted-field#readme"
+}
