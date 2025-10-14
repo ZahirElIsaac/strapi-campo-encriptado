@@ -12,6 +12,7 @@ const Input = (props) => {
     labelAction,
     name,
     onChange,
+    placeholder,
     required,
     value = '',
   } = props;
@@ -45,6 +46,7 @@ const Input = (props) => {
       </Field.Label>
       <Field.Input
         type="text"
+        placeholder={placeholder}
         value={value}
         onChange={handleChange}
         disabled={disabled}
