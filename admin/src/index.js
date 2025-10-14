@@ -73,18 +73,6 @@ export default {
                   defaultMessage: 'Número mínimo de caracteres requeridos',
                 },
               },
-              {
-                name: 'placeholder',
-                type: 'text',
-                intlLabel: {
-                  id: 'encrypted-field.options.placeholder.label',
-                  defaultMessage: 'Placeholder',
-                },
-                description: {
-                  id: 'encrypted-field.options.placeholder.description',
-                  defaultMessage: 'Texto de ayuda que se muestra en el campo',
-                },
-              },
             ],
           },
         ],
