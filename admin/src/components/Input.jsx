@@ -3,18 +3,20 @@ import { useIntl } from 'react-intl';
 import { Field, Flex, IconButton, Typography } from '@strapi/design-system';
 import { Eye, EyeStriked, Duplicate, Check } from '@strapi/icons';
 
-const Input = ({
-  attribute,
-  description,
-  disabled,
-  error,
-  intlLabel,
-  labelAction,
-  name,
-  onChange,
-  required,
-  value,
-}) => {
+const Input = (props) => {
+  const {
+    attribute,
+    description,
+    disabled,
+    error,
+    intlLabel,
+    labelAction,
+    name,
+    onChange,
+    required,
+    value = '',
+  } = props;
+
   const { formatMessage } = useIntl();
   const [showValue, setShowValue] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -29,6 +31,16 @@ const Input = ({
         console.error('Error al copiar:', err);
       }
     }
+  };
+
+  const handleChange = (e) => {
+    onChange({
+      target: {
+        name,
+        value: e.target.value,
+        type: attribute?.type || 'text',
+      },
+    });
   };
 
   const charCount = value ? value.length : 0;
@@ -68,12 +80,8 @@ const Input = ({
           id: 'encrypted-field.placeholder',
           defaultMessage: 'Ingresa el texto a cifrar...',
         })}
-        value={value || ''}
-        onChange={(e) => {
-          onChange({
-            target: { name, value: e.target.value, type: attribute.type },
-          });
-        }}
+        value={value}
+        onChange={handleChange}
         disabled={disabled}
       />
       <Flex justifyContent="space-between" alignItems="center" paddingTop={1}>

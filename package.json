@@ -1,6 +1,6 @@
 {
   "name": "@growy/strapi-plugin-encrypted-field",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Campo personalizado de texto cifrado para Strapi",
   "strapi": {
     "name": "encrypted-field",
