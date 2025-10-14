@@ -1,4 +1,4 @@
-import Lock from '@strapi/icons/Lock';
+import EncryptedIcon from './components/EncryptedIcon';
 
 export default {
   register(app) {
@@ -14,7 +14,7 @@ export default {
         id: 'encrypted-field.description',
         defaultMessage: 'Campo de texto que se cifra automáticamente con AES-256-GCM',
       },
-      icon: Lock,
+      icon: EncryptedIcon,
       components: {
         Input: async () => import('./components/Input.jsx'),
       },
@@ -22,7 +22,7 @@ export default {
         base: [
           {
             sectionTitle: {
-              id: 'encrypted-field.options.advanced.settings',
+              id: 'encrypted-field.options.base.settings',
               defaultMessage: 'Configuración',
             },
             items: [
@@ -48,6 +48,30 @@ export default {
                 description: {
                   id: 'encrypted-field.options.private.description',
                   defaultMessage: 'Este campo no será devuelto por la API',
+                },
+              },
+              {
+                name: 'maxLength',
+                type: 'number',
+                intlLabel: {
+                  id: 'encrypted-field.options.maxLength.label',
+                  defaultMessage: 'Longitud máxima',
+                },
+                description: {
+                  id: 'encrypted-field.options.maxLength.description',
+                  defaultMessage: 'Número máximo de caracteres permitidos',
+                },
+              },
+              {
+                name: 'minLength',
+                type: 'number',
+                intlLabel: {
+                  id: 'encrypted-field.options.minLength.label',
+                  defaultMessage: 'Longitud mínima',
+                },
+                description: {
+                  id: 'encrypted-field.options.minLength.description',
+                  defaultMessage: 'Número mínimo de caracteres requeridos',
                 },
               },
             ],
