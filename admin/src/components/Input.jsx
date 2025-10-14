@@ -45,10 +45,6 @@ const Input = (props) => {
       </Field.Label>
       <Field.Input
         type="text"
-        placeholder={formatMessage({
-          id: 'encrypted-field.placeholder',
-          defaultMessage: 'Ingresa el texto a cifrar...',
-        })}
         value={value}
         onChange={handleChange}
         disabled={disabled}
