@@ -8,7 +8,6 @@
 
 Plugin oficial de **Growy AI** para Strapi que proporciona un campo personalizado de texto cifrado con AES-256-GCM. Protege información sensible directamente en tu base de datos con cifrado transparente y validación robusta.
 
-## Características
 
 - ✅ **Campo personalizado** "Texto Cifrado" en el Content-Type Builder
 - ✅ **Cifrado automático** AES-256-GCM al guardar
@@ -18,6 +17,7 @@ Plugin oficial de **Growy AI** para Strapi que proporciona un campo personalizad
 - ✅ **Gestión de claves robusta** con validación y mensajes de error claros
 - ✅ **Datos cifrados** en base de datos con IV único y Auth Tag
 - ✅ **Reutilizable** en cualquier colección o componente
+- ✅ **Soporte completo** para componentes anidados y estructuras complejas
 
 ## Instalación
 
@@ -137,6 +137,7 @@ El campo funciona como un campo de texto normal:
 - **Al guardar**: Se cifra automáticamente
 - **Al leer**: Se descifra automáticamente
 - **En la BD**: Se guarda cifrado con formato `iv:authTag:encrypted`
+- **En componentes**: Funciona igual en componentes anidados de cualquier profundidad
 
 ### 3. Uso por API
 

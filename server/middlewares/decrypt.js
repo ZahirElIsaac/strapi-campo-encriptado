@@ -4,40 +4,61 @@ module.exports = (config, { strapi }) => {
   return async (ctx, next) => {
     await next();
 
-    if (!ctx.body || !ctx.body.data) return;
+    if (!ctx.body) return;
 
-    const decryptData = (data) => {
-      if (!data || typeof data !== 'object') return;
+    // Función recursiva para descifrar campos en cualquier nivel de anidación
+    const decryptRecursive = (obj, modelUid = null) => {
+      if (!obj || typeof obj !== 'object') return;
 
-      const contentType = ctx.params?.model || ctx.state?.route?.info?.type;
-      if (!contentType) return;
-
-      let model;
-      try {
-        model = strapi.getModel(contentType);
-      } catch (e) {
+      // Si es un array, procesar cada elemento
+      if (Array.isArray(obj)) {
+        obj.forEach(item => decryptRecursive(item, modelUid));
         return;
       }
 
-      if (!model?.attributes) return;
+      // Detectar si es un componente por el campo __component
+      let currentModelUid = modelUid;
+      if (obj.__component) {
+        currentModelUid = obj.__component;
+      }
 
-      for (const [key, attribute] of Object.entries(model.attributes)) {
-        if (!isEncryptedField(attribute)) continue;
-        
-        if (data[key] && typeof data[key] === 'string') {
-          try {
-            data[key] = decrypt(data[key], strapi);
-          } catch (error) {
-            strapi.log.error(`Error descifrando campo ${key}: ${error.message}`);
+      // Obtener el modelo si tenemos un UID
+      let model = null;
+      if (currentModelUid) {
+        try {
+          model = strapi.getModel(currentModelUid) || strapi.components[currentModelUid];
+        } catch (e) {
+          // Ignorar si no se encuentra el modelo
+        }
+      }
+
+      // Descifrar campos del modelo actual
+      if (model?.attributes) {
+        for (const [key, attribute] of Object.entries(model.attributes)) {
+          if (isEncryptedField(attribute) && obj[key] && typeof obj[key] === 'string') {
+            try {
+              obj[key] = decrypt(obj[key], strapi);
+            } catch (error) {
+              strapi.log.error(`Error descifrando campo ${key}: ${error.message}`);
+            }
           }
+        }
+      }
+
+      // Procesar recursivamente todos los valores del objeto
+      for (const value of Object.values(obj)) {
+        if (value && typeof value === 'object') {
+          decryptRecursive(value, currentModelUid);
         }
       }
     };
 
-    if (Array.isArray(ctx.body.data)) {
-      ctx.body.data.forEach(decryptData);
+    // Procesar ctx.body.data si existe
+    if (ctx.body.data) {
+      decryptRecursive(ctx.body.data);
     } else {
-      decryptData(ctx.body.data);
+      // Procesar ctx.body directamente
+      decryptRecursive(ctx.body);
     }
   };
 };
