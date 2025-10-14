@@ -2,7 +2,7 @@ const { encrypt, decrypt, validateValue, isEncryptedField } = require('./utils/c
 
 module.exports = ({ strapi }) => {
   
-  // Obtener tanto content types como componentes
+  
   const contentTypes = Object.values(strapi.contentTypes);
   const components = Object.values(strapi.components);
   const allModels = [...contentTypes, ...components];

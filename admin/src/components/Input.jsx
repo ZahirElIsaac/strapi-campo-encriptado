@@ -28,7 +28,7 @@ const Input = (props) => {
     });
   };
 
-  // Extraer solo el nombre del campo sin prefijos
+  
   const fieldName = name.includes('.') ? name.split('.').pop() : name;
   const label = intlLabel?.id ? formatMessage(intlLabel) : (intlLabel || fieldName);
 
