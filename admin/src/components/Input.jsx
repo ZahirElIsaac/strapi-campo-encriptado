@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-import { Field } from '@strapi/design-system';
+import { Field, IconButton } from '@strapi/design-system';
+import { useNotification } from '@strapi/strapi/admin';
+import { Eye, EyeStriked, Duplicate } from '@strapi/icons';
 
 const Input = (props) => {
   const {
@@ -18,6 +20,8 @@ const Input = (props) => {
   } = props;
 
   const { formatMessage } = useIntl();
+  const { toggleNotification } = useNotification();
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleChange = (e) => {
     onChange({
@@ -29,7 +33,27 @@ const Input = (props) => {
     });
   };
 
-  
+  const handleCopy = async () => {
+    if (value) {
+      try {
+        await navigator.clipboard.writeText(value);
+        toggleNotification({
+          type: 'success',
+          message: 'Copiado al portapapeles',
+        });
+      } catch (err) {
+        toggleNotification({
+          type: 'danger',
+          message: 'Error al copiar',
+        });
+      }
+    }
+  };
+
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible);
+  };
+
   const fieldName = name.includes('.') ? name.split('.').pop() : name;
   const label = intlLabel?.id ? formatMessage(intlLabel) : (intlLabel || fieldName);
 
@@ -44,13 +68,41 @@ const Input = (props) => {
       <Field.Label action={labelAction}>
         {label}
       </Field.Label>
-      <Field.Input
-        type="text"
-        placeholder={placeholder}
-        value={value}
-        onChange={handleChange}
-        disabled={disabled}
-      />
+      <div style={{ position: 'relative' }}>
+        <Field.Input
+          type={isVisible ? 'text' : 'password'}
+          placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
+          disabled={disabled}
+          style={{ paddingRight: '80px' }}
+        />
+        <div style={{ 
+          position: 'absolute', 
+          right: '8px', 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          display: 'flex',
+          gap: '4px'
+        }}>
+          <IconButton
+            onClick={toggleVisibility}
+            label={isVisible ? 'Ocultar' : 'Mostrar'}
+            disabled={disabled}
+            variant="ghost"
+          >
+            {isVisible ? <EyeStriked /> : <Eye />}
+          </IconButton>
+          <IconButton
+            onClick={handleCopy}
+            label="Copiar"
+            disabled={disabled || !value}
+            variant="ghost"
+          >
+            <Duplicate />
+          </IconButton>
+        </div>
+      </div>
       <Field.Hint />
       <Field.Error />
     </Field.Root>

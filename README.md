@@ -13,7 +13,9 @@ Plugin oficial de **Growy AI** para Strapi que proporciona un campo personalizad
 - ✅ **Cifrado automático** AES-256-GCM al guardar
 - ✅ **Descifrado transparente** al leer (panel y API)
 - ✅ **Validación backend** con soporte para regex y restricciones
-- ✅ **UI mejorada** con controles de visibilidad, copiar y contador de caracteres
+- ✅ **UI mejorada** con controles de visibilidad y copiar al portapapeles
+- ✅ **Valores ocultos** por defecto con opción de mostrar/ocultar
+- ✅ **Notificaciones** de confirmación al copiar valores
 - ✅ **Gestión de claves robusta** con validación y mensajes de error claros
 - ✅ **Datos cifrados** en base de datos con IV único y Auth Tag
 - ✅ **Reutilizable** en cualquier colección o componente
@@ -131,9 +133,13 @@ Si el valor no cumple con el patrón, se lanzará un error antes de cifrar.
 
 ### 2. Usar el campo
 
-El campo funciona como un campo de texto normal:
+El campo funciona como un campo de texto normal con características de seguridad adicionales:
 
 - **En el panel**: Escribe texto normalmente
+- **Valores ocultos**: Los valores se muestran como `***` por defecto
+- **Botón ojo**: Alterna entre mostrar/ocultar el valor
+- **Botón copiar**: Copia el valor al portapapeles con notificación de confirmación
+- **Placeholder personalizable**: Configura un placeholder desde las opciones del campo
 - **Al guardar**: Se cifra automáticamente
 - **Al leer**: Se descifra automáticamente
 - **En la BD**: Se guarda cifrado con formato `iv:authTag:encrypted`
