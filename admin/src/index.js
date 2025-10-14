@@ -1,11 +1,9 @@
-import EncryptedIcon from './components/EncryptedIcon';
-
 export default {
   register(app) {
     app.customFields.register({
       name: 'encrypted-text',
       pluginId: 'encrypted-field',
-      type: 'text',
+      type: 'string',
       intlLabel: {
         id: 'encrypted-field.label',
         defaultMessage: 'Texto Cifrado',
@@ -14,9 +12,10 @@ export default {
         id: 'encrypted-field.description',
         defaultMessage: 'Campo de texto que se cifra automáticamente con AES-256-GCM',
       },
-      icon: EncryptedIcon,
       components: {
-        Input: async () => import('./components/Input.jsx'),
+        Input: async () => import('./components/Input').then((module) => ({
+          default: module.default,
+        })),
       },
       options: {
         base: [

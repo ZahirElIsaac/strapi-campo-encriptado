@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useIntl } from 'react-intl';
-import { Field, Flex, IconButton, Typography } from '@strapi/design-system';
-import { Eye, EyeStriked, Duplicate, Check } from '@strapi/icons';
+import { Field } from '@strapi/design-system';
 
 const Input = (props) => {
   const {
@@ -18,64 +17,34 @@ const Input = (props) => {
   } = props;
 
   const { formatMessage } = useIntl();
-  const [showValue, setShowValue] = useState(false);
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    if (value) {
-      try {
-        await navigator.clipboard.writeText(value);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      } catch (err) {
-        console.error('Error al copiar:', err);
-      }
-    }
-  };
 
   const handleChange = (e) => {
     onChange({
       target: {
         name,
         value: e.target.value,
-        type: attribute?.type || 'text',
+        type: attribute?.type || 'string',
       },
     });
   };
 
-  const charCount = value ? value.length : 0;
+  // Extraer solo el nombre del campo sin prefijos
+  const fieldName = name.includes('.') ? name.split('.').pop() : name;
+  const label = intlLabel?.id ? formatMessage(intlLabel) : (intlLabel || fieldName);
 
   return (
     <Field.Root
       name={name}
       id={name}
       error={error}
-      hint={description && formatMessage(description)}
+      hint={description?.id ? formatMessage(description) : description}
       required={required}
     >
-      <Flex justifyContent="space-between" alignItems="center">
-        <Field.Label action={labelAction}>
-          {formatMessage(intlLabel)} 🔒
-        </Field.Label>
-        <Flex gap={2}>
-          <IconButton
-            label={showValue ? 'Ocultar valor' : 'Mostrar valor'}
-            icon={showValue ? <EyeStriked /> : <Eye />}
-            onClick={() => setShowValue(!showValue)}
-            variant="ghost"
-            disabled={!value}
-          />
-          <IconButton
-            label={copied ? 'Copiado' : 'Copiar valor'}
-            icon={copied ? <Check /> : <Duplicate />}
-            onClick={handleCopy}
-            variant="ghost"
-            disabled={!value}
-          />
-        </Flex>
-      </Flex>
+      <Field.Label action={labelAction}>
+        {label}
+      </Field.Label>
       <Field.Input
-        type={showValue ? 'text' : 'password'}
+        type="text"
         placeholder={formatMessage({
           id: 'encrypted-field.placeholder',
           defaultMessage: 'Ingresa el texto a cifrar...',
@@ -84,14 +53,7 @@ const Input = (props) => {
         onChange={handleChange}
         disabled={disabled}
       />
-      <Flex justifyContent="space-between" alignItems="center" paddingTop={1}>
-        <Field.Hint />
-        {charCount > 0 && (
-          <Typography variant="pi" textColor="neutral600">
-            {charCount} {charCount === 1 ? 'carácter' : 'caracteres'}
-          </Typography>
-        )}
-      </Flex>
+      <Field.Hint />
       <Field.Error />
     </Field.Root>
   );
