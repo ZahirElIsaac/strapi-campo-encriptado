@@ -238,7 +238,7 @@ MIT © 2025 Growy AI
 
 **Growy AI** - Soluciones de IA y automatización empresarial
 
-**Autor principal**: Zahir Elisaac
+**Autor principal**: Zahir El isaac
 
 ---
 
