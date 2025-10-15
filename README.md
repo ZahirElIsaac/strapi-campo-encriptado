@@ -229,14 +229,6 @@ apiKey: "sk-1234567890abcdef"
 - ⚠️ **Rendimiento**: El cifrado/descifrado añade overhead mínimo (~1-2ms por operación)
 - ⚠️ **Sincronización de claves**: Todos los entornos que compartan BD deben usar la misma clave
 
-## Soporte
-
-Para reportar bugs, solicitar funcionalidades o contribuir:
-
-- **Issues**: [GitHub Issues](https://github.com/growy-ai/strapi-plugin-encrypted-field/issues)
-- **Documentación**: [README.md](https://github.com/growy-ai/strapi-plugin-encrypted-field)
-- **Email**: support@growy.ai
-
 ## Licencia
 
 MIT © 2025 Growy AI
