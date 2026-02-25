@@ -1,10 +1,47 @@
-import React, { useState } from 'react';
+import { type ChangeEvent, type ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { Field, IconButton } from '@strapi/design-system';
 import { useNotification } from '@strapi/strapi/admin';
 import { Eye, EyeStriked, Duplicate } from '@strapi/icons';
 
-const Input = (props) => {
+type MessageDescriptorLike = {
+  id?: string;
+  defaultMessage?: string;
+  values?: Record<string, unknown>;
+};
+
+type NotificationType = 'success' | 'danger' | 'warning' | 'info';
+
+interface NotificationApi {
+  toggleNotification: (payload: {
+    type: NotificationType;
+    message: string;
+  }) => void;
+}
+
+interface InputProps {
+  attribute?: {
+    type?: string;
+  };
+  description?: string | MessageDescriptorLike;
+  disabled?: boolean;
+  error?: string;
+  intlLabel?: string | MessageDescriptorLike;
+  labelAction?: ReactNode;
+  name: string;
+  onChange: (event: {
+    target: {
+      name: string;
+      value: string;
+      type: string;
+    };
+  }) => void;
+  placeholder?: string;
+  required?: boolean;
+  value?: string | null;
+}
+
+const Input = (props: InputProps) => {
   const {
     attribute,
     description,
@@ -20,10 +57,11 @@ const Input = (props) => {
   } = props;
 
   const { formatMessage } = useIntl();
-  const { toggleNotification } = useNotification();
+  const { toggleNotification } = useNotification() as NotificationApi;
   const [isVisible, setIsVisible] = useState(false);
+  const safeValue = typeof value === 'string' ? value : '';
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange({
       target: {
         name,
@@ -34,9 +72,9 @@ const Input = (props) => {
   };
 
   const handleCopy = async () => {
-    if (value) {
+    if (safeValue) {
       try {
-        await navigator.clipboard.writeText(value);
+        await navigator.clipboard.writeText(safeValue);
         toggleNotification({
           type: 'success',
           message: 'Copiado al portapapeles',
@@ -55,14 +93,25 @@ const Input = (props) => {
   };
 
   const fieldName = name.includes('.') ? name.split('.').pop() : name;
-  const label = intlLabel?.id ? formatMessage(intlLabel) : (intlLabel || fieldName);
+  const label =
+    typeof intlLabel === 'object'
+      ? intlLabel?.id
+        ? formatMessage(intlLabel)
+        : intlLabel?.defaultMessage || fieldName
+      : intlLabel || fieldName;
+  const hint =
+    typeof description === 'object'
+      ? description?.id
+        ? formatMessage(description)
+        : description?.defaultMessage
+      : description;
 
   return (
     <Field.Root
       name={name}
       id={name}
       error={error}
-      hint={description?.id ? formatMessage(description) : description}
+      hint={hint}
       required={required}
     >
       <Field.Label action={labelAction}>
@@ -72,7 +121,7 @@ const Input = (props) => {
         <Field.Input
           type={isVisible ? 'text' : 'password'}
           placeholder={placeholder}
-          value={value}
+          value={safeValue}
           onChange={handleChange}
           disabled={disabled}
           style={{ paddingRight: '80px' }}
@@ -96,7 +145,7 @@ const Input = (props) => {
           <IconButton
             onClick={handleCopy}
             label="Copiar"
-            disabled={disabled || !value}
+            disabled={disabled || !safeValue}
             variant="ghost"
           >
             <Duplicate />

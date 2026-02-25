@@ -1,47 +1,52 @@
-# Strapi Plugin - Encrypted Field
+# Strapi Plugin -- Encrypted Field
 
 <div align="center">
-  <img src="https://img.shields.io/npm/v/@growy/strapi-plugin-encrypted-field" alt="npm version" />
-  <img src="https://img.shields.io/npm/l/@growy/strapi-plugin-encrypted-field" alt="license" />
+  <img src="https://img.shields.io/npm/v/@joeygrable/strapi-plugin-encrypted-field" alt="npm version" />
+  <img src="https://img.shields.io/npm/l/@joeygrable/strapi-plugin-encrypted-field" alt="license" />
   <img src="https://img.shields.io/badge/Strapi-v5-blueviolet" alt="Strapi v5" />
 </div>
 
-Plugin oficial de **Growy AI** para Strapi que proporciona un campo personalizado de texto cifrado con AES-256-GCM. Protege información sensible directamente en tu base de datos con cifrado transparente y validación robusta.
+Strapi v5 plugin for Strapi that provides a custom encrypted
+text field using AES-256-GCM. Protect sensitive information directly in
+your database with transparent encryption and robust validation.
 
+- ✅ **Custom field** "Encrypted Text" in the Content-Type Builder
+- ✅ **Automatic encryption** (AES-256-GCM) on save
+- ✅ **Transparent decryption** on read (admin panel and API)
+- ✅ **Backend validation** with regex and constraint support
+- ✅ **Enhanced UI** with visibility controls and copy-to-clipboard
+- ✅ **Hidden values** by default with show/hide toggle
+- ✅ **Confirmation notifications** when copying values
+- ✅ **Robust key management** with validation and clear error messages
+- ✅ **Encrypted database storage** with unique IV and Auth Tag
+- ✅ **Reusable** in any collection or component
+- ✅ **Full support** for nested components and complex structures
 
-- ✅ **Campo personalizado** "Texto Cifrado" en el Content-Type Builder
-- ✅ **Cifrado automático** AES-256-GCM al guardar
-- ✅ **Descifrado transparente** al leer (panel y API)
-- ✅ **Validación backend** con soporte para regex y restricciones
-- ✅ **UI mejorada** con controles de visibilidad y copiar al portapapeles
-- ✅ **Valores ocultos** por defecto con opción de mostrar/ocultar
-- ✅ **Notificaciones** de confirmación al copiar valores
-- ✅ **Gestión de claves robusta** con validación y mensajes de error claros
-- ✅ **Datos cifrados** en base de datos con IV único y Auth Tag
-- ✅ **Reutilizable** en cualquier colección o componente
-- ✅ **Soporte completo** para componentes anidados y estructuras complejas
+------------------------------------------------------------------------
 
-## Instalación
+## Installation
 
-### Desde npm
+### From npm
 
-```bash
-npm install @growy/strapi-plugin-encrypted-field
+``` bash
+npm install @joeygrable/strapi-plugin-encrypted-field
 ```
 
-### Desde yarn
+### From yarn
 
-```bash
-yarn add @growy/strapi-plugin-encrypted-field
+``` bash
+yarn add @joeygrable/strapi-plugin-encrypted-field
 ```
 
-## Configuración
+------------------------------------------------------------------------
 
-### 1. Habilitar el plugin
+## Configuration
 
-Crea o edita `config/plugins.js` o `config/plugins.ts`:
+### 1. Enable the plugin
 
-```javascript
+Create or edit `config/plugins.js` or `config/plugins.ts`:
+
+``` javascript
 module.exports = {
   'encrypted-field': {
     enabled: true,
@@ -49,21 +54,21 @@ module.exports = {
 };
 ```
 
-### 2. Configurar la clave de cifrado (REQUERIDO)
+### 2. Configure the encryption key (REQUIRED)
 
-#### Opción A: Variable de entorno (recomendado)
+#### Option A: Environment variable (recommended)
 
-Agrega a tu `.env`:
+Add to your `.env`:
 
-```bash
-ENCRYPTION_KEY=tu_clave_de_64_caracteres_hexadecimales_aqui
+``` bash
+ENCRYPTION_KEY=your_64_character_hexadecimal_key_here
 ```
 
-#### Opción B: Archivo de configuración
+#### Option B: Configuration file
 
-Edita `config/plugins.js`:
+Edit `config/plugins.js`:
 
-```javascript
+``` javascript
 module.exports = ({ env }) => ({
   'encrypted-field': {
     enabled: true,
@@ -74,174 +79,190 @@ module.exports = ({ env }) => ({
 });
 ```
 
-#### Generar clave segura
+#### Generate a secure key
 
-```bash
+``` bash
+# usine openssl
+openssl rand -hex 32
+
+# using node
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Esto generará una clave de 64 caracteres hexadecimales (32 bytes).
+This generates a 64-character hexadecimal key (32 bytes).
 
-⚠️ **CRÍTICO - Gestión de claves**:
-- **Guarda la clave de forma segura** (gestor de secretos, variables de entorno cifradas)
-- **Nunca** la incluyas en el control de versiones
-- **Si pierdes la clave**, no podrás descifrar los datos existentes
-- **Usa la misma clave** en todos los entornos que compartan la misma base de datos
-- **Para producción**, considera usar servicios como AWS Secrets Manager, HashiCorp Vault o similar
+⚠️ **CRITICAL -- Key Management**:
 
-### 3. Rebuild del admin
+- **Store the key securely** (secret manager, encrypted environment variables)
+- **Never** commit it to version control
+- **If you lose the key**, you will not be able to decrypt existing data
+- **Use the same key** across all environments sharing the same database
+- **For production**, consider AWS Secrets Manager, HashiCorp Vault, or similar services
 
-```bash
-npm run build
-npm run develop
-```
+------------------------------------------------------------------------
 
-## Requisitos
+## Requirements
 
-- **Strapi**: v5.0.0 o superior
-- **Node.js**: 18.x - 22.x
-- **npm**: 6.0.0 o superior
+- **Strapi**: v5.0.0 or higher
+- **Node.js**: 10.x -- 24.x
+- **npm**: 8.0.0 or higher
 
-## Validación de datos
+------------------------------------------------------------------------
 
-El plugin soporta validación antes del cifrado:
+## Data Validation
 
-### Configurar validación regex
+The plugin supports validation before encryption.
 
-1. En el Content-Type Builder, selecciona el campo cifrado
-2. Ve a la pestaña **"Advanced Settings"**
-3. En **"RegEx pattern"**, ingresa tu expresión regular
-4. Guarda los cambios
+### Configure regex validation
 
-**Ejemplo**: Para validar formato de API key:
-```regex
+1. In the Content-Type Builder, select the encrypted field
+2. Go to the **Advanced Settings** tab
+3. In **RegEx pattern**, enter your regular expression
+4. Save changes
+
+**Example**:
+
+``` regex
 ^sk-[a-zA-Z0-9]{32}$
 ```
 
-Si el valor no cumple con el patrón, se lanzará un error antes de cifrar.
+If the value does not match the pattern, an error will be thrown before
+encryption.
 
-## Uso
+------------------------------------------------------------------------
 
-### 1. Agregar campo cifrado a una colección
+## Usage
 
-1. Ve a **Content-Type Builder**
-2. Selecciona una colección o crea una nueva
-3. Click en **"Add another field"**
-4. Busca **"Texto Cifrado"** (con icono 🔒)
-5. Configura el nombre del campo
-6. Guarda y reinicia Strapi
+### 1. Add an encrypted field to a collection
 
-### 2. Usar el campo
+1. Go to **Content-Type Builder**
+2. Select a collection or create a new one
+3. Click **Add another field**
+4. Search for **Encrypted Text** (🔒 icon)
+5. Configure the field name
+6. Save and restart Strapi
 
-El campo funciona como un campo de texto normal con características de seguridad adicionales:
+### 2. Using the field
 
-- **En el panel**: Escribe texto normalmente
-- **Valores ocultos**: Los valores se muestran como `***` por defecto
-- **Botón ojo**: Alterna entre mostrar/ocultar el valor
-- **Botón copiar**: Copia el valor al portapapeles con notificación de confirmación
-- **Placeholder personalizable**: Configura un placeholder desde las opciones del campo
-- **Al guardar**: Se cifra automáticamente
-- **Al leer**: Se descifra automáticamente
-- **En la BD**: Se guarda cifrado con formato `iv:authTag:encrypted`
-- **En componentes**: Funciona igual en componentes anidados de cualquier profundidad
+- **In the admin panel**: Enter text normally
+- **Hidden values**: Displayed as `***` by default
+- **Eye button**: Toggle show/hide value
+- **Copy button**: Copy value to clipboard with confirmation
+- **On save**: Automatically encrypted
+- **On read**: Automatically decrypted
+- **In the database**: Stored as `iv:authTag:encryptedData`
+- **In components**: Works in nested components at any depth
 
-### 3. Uso por API
+### 3. API Usage
 
-```bash
-# Crear con campo cifrado
-curl -X POST http://localhost:1337/api/usuarios \
-  -H "Content-Type: application/json" \
+``` bash
+# Create with encrypted field
+curl -X POST http://localhost:1337/api/users 
+  -H "Content-Type: application/json" 
   -d '{
     "data": {
-      "nombre": "Juan",
-      "apiKey": "mi-clave-secreta-123"
+      "name": "Juan",
+      "apiKey": "my-secret-key-123"
     }
   }'
 
-# Leer (devuelve descifrado)
-curl -X GET http://localhost:1337/api/usuarios/1
-# Response: { "nombre": "Juan", "apiKey": "mi-clave-secreta-123" }
+# Read (returns decrypted value)
+curl -X GET http://localhost:1337/api/users/1
+# Response: { "name": "Juan", "apiKey": "my-secret-key-123" }
 ```
 
-## Ejemplo de uso
+## Example of Usage
 
-### Colección "Usuario" con API Key cifrada
+### Collection with encrypted API key
 
 **Schema:**
+
 ```json
 {
-  "nombre": "string",
-  "email": "email",
-  "apiKey": "plugin::encrypted-field.encrypted-text"
+  // ...
+  "attributes": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 255,
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "minLength": 1,
+      "maxLength": 255,
+      "required": true
+    },
+    "api_key": {
+      "type": "plugin::encrypted-field.encrypted-text"
+    }
+  }
+  // ...
 }
 ```
 
-**En la BD:**
-```
+**In the database:**
+
+```plaintext
 apiKey: "a1b2c3d4e5f6....:f9e8d7c6b5a4....:9f8e7d6c5b4a3..."
 ```
 
-**En el panel y API:**
-```
+**In the admin panel and API:**
+
+```plaintext
 apiKey: "sk-1234567890abcdef"
 ```
 
-## Seguridad y arquitectura
+------------------------------------------------------------------------
 
-### Especificaciones técnicas
+## Security & Architecture
 
-- **Algoritmo**: AES-256-GCM (estándar NIST, grado militar)
-- **Tamaño de clave**: 256 bits (32 bytes, 64 caracteres hexadecimales)
-- **IV (Initialization Vector)**: 96 bits (12 bytes) generado aleatoriamente por operación
-- **Auth Tag**: 128 bits (16 bytes) para verificación de integridad
-- **Formato almacenado**: `iv:authTag:encryptedData` (todos en hexadecimal)
+### Technical Specifications
 
-### Características de seguridad
+- **Algorithm**: AES-256-GCM
+- **Key size**: 256 bits (32 bytes, 64 hex characters)
+- **IV**: 96 bits (12 bytes), randomly generated per operation
+- **Auth Tag**: 128 bits (16 bytes)
+- **Storage format**: `iv:authTag:encryptedData`
 
-- ✅ **Cifrado autenticado**: GCM proporciona confidencialidad e integridad
-- ✅ **IV único**: Cada operación de cifrado genera un IV aleatorio
-- ✅ **Resistencia a manipulación**: Auth Tag detecta cualquier modificación
-- ✅ **Validación de entrada**: Soporte para regex y restricciones personalizadas
-- ✅ **Manejo de errores seguro**: Logs controlados sin exponer datos sensibles
+### Security Features
 
-### Mejores prácticas
+- ✅ Authenticated encryption (confidentiality + integrity)
+- ✅ Unique IV per encryption
+- ✅ Tamper detection via Auth Tag
+- ✅ Regex validation support
+- ✅ **Secure error handling**: Controlled logs without exposing sensitive data
 
-1. **Rotación de claves**: Planifica un proceso de rotación periódica
-2. **Separación de entornos**: Usa claves diferentes para dev/staging/prod
-3. **Auditoría**: Monitorea logs de errores de cifrado/descifrado
-4. **Backup de claves**: Mantén copias seguras de las claves en múltiples ubicaciones
-5. **Campos privados**: Marca campos sensibles como "privados" para excluirlos de la API pública
+------------------------------------------------------------------------
 
-## Casos de uso
+## Use cases
 
-- 🔑 API Keys de terceros
-- 🔐 Tokens de acceso
-- 🔒 Secretos de webhooks
-- 💳 Información sensible
-- 📧 Credenciales SMTP
-- 🔑 Contraseñas de aplicaciones
+- 🔑 Third-party API keys
+- 🔐 Access tokens
+- 🔒 Webhook secrets
+- 💳 Sensitive information
+- 📧 SMTP credentials
+- 🔑 Application passwords
 
-## Limitaciones conocidas
+------------------------------------------------------------------------
 
-- ❌ **Búsqueda**: No se puede buscar por campos cifrados (datos cifrados en BD)
-- ❌ **Ordenamiento**: No se puede ordenar por campos cifrados
-- ❌ **Filtros**: No se pueden aplicar filtros directos sobre campos cifrados
-- ⚠️ **Rendimiento**: El cifrado/descifrado añade overhead mínimo (~1-2ms por operación)
-- ⚠️ **Sincronización de claves**: Todos los entornos que compartan BD deben usar la misma clave
+## Known Limitations
 
-## Licencia
+- ❌ **Search**: Cannot search encrypted fields
+- ❌ **Sort**: Cannot sort by encrypted fields
+- ❌ **Filter**: Cannot filter directly on encrypted fields
+- ⚠️ **Performance**: Minimal  overhead (~1--2ms per operation)
+- ⚠️ **Synchronization**: All environments sharing a database must use the same key
 
-MIT © 2025 Growy AI
+------------------------------------------------------------------------
 
-## Desarrollado por
+## License
 
-**Growy AI** - Soluciones de IA y automatización empresarial
+MIT © 2026 Get Community, Inc.
 
-**Autor principal**: Zahir El isaac
+------------------------------------------------------------------------
 
----
+## Developed by
 
-<div align="center">
-  <p>Si este plugin te resulta útil, considera darle una ⭐ en GitHub</p>
-  <p>Hecho con ❤️ por el equipo de Growy AI</p>
-</div>
+**Get Community, Inc.**
+Lead Author: Joey Grable

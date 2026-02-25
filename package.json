@@ -1,40 +1,71 @@
 {
-  "name": "@growy/strapi-plugin-encrypted-field",
+  "name": "@getcommunity/strapi-plugin-encrypted-field",
   "version": "2.2.1",
-  "description": "Campo personalizado de texto cifrado para Strapi",
+  "description": "Custom encrypted text field for Strapi",
   "strapi": {
     "name": "encrypted-field",
     "displayName": "Encrypted Field",
-    "description": "Agrega un campo de texto cifrado con AES-256-GCM",
+    "description": "Add a text field encrypted with AES-256-GCM",
     "kind": "plugin"
   },
-  "dependencies": {},
+  "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true })\"",
+    "build:tsup": "tsup",
+    "build:server": "tsc -p server/tsconfig.json",
+    "build:admin": "tsc -p admin/tsconfig.json",
+    "build": "pnpm run clean && pnpm run build:server && pnpm run build:admin",
+    "typecheck": "tsc -p server/tsconfig.json --noEmit && tsc -p admin/tsconfig.json --noEmit"
+  },
   "peerDependencies": {
     "@strapi/strapi": "^5.0.0"
   },
-  "main": "server/index.js",
+  "devDependencies": {
+    "@strapi/typescript-utils": "^5.0.0",
+    "@types/node": "^25.3.0",
+    "@types/react": "^18.3.28",
+    "tsup": "^8.5.1",
+    "typescript": "^5.4.4"
+  },
+  "main": "./dist/server/index.js",
+  "types": "./dist/server/index.d.ts",
   "exports": {
-    "./strapi-admin": "./admin/src/index.js",
-    "./strapi-server": "./server/index.js",
+    "./strapi-admin": {
+      "types": "./dist/admin/index.d.ts",
+      "source": "./admin/src/index.ts",
+      "import": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "types": "./dist/server/index.d.ts",
+      "source": "./server/index.ts",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    },
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist/",
+    "admin/src/",
+    "server/"
+  ],
   "author": {
-    "name": "Growy AI",
-    "email": "support@growy.ai",
-    "url": "https://getgrowy.ai"
+    "name": "Get Community, Inc.",
+    "email": "joey@getcommunity.com",
+    "url": "https://getcommunity.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ZahirElIsaac/strapi-campo-encriptado.git"
+    "url": "https://github.com/joeygrable94/strapi-campo-encriptado.git"
   },
   "contributors": [
     {
-      "name": "Zahir El isaac"
+      "name": "Joey Grable"
     }
   ],
   "engines": {
-    "node": ">=18.0.0 <=22.x.x",
-    "npm": ">=6.0.0"
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=8.0.0",
+    "pnpm": ">=7.0.0"
   },
   "license": "MIT",
   "keywords": [
@@ -45,7 +76,9 @@
     "security",
     "custom-field",
     "encrypted-field",
-    "growy-ai",
+    "get-community",
+    "get-community-inc",
+    "getcommunity",
     "data-protection",
     "cryptography",
     "strapi-v5"

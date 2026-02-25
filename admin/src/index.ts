@@ -1,5 +1,25 @@
-export default {
-  register(app) {
+import en from './translations/en.json';
+import es from './translations/es.json';
+
+type TradData = Record<string, string>;
+
+interface AppLike {
+  customFields: {
+    register: (config: unknown) => void;
+  };
+}
+
+interface RegisterTradsArgs {
+  locales: string[];
+}
+
+const TRANSLATIONS: Record<string, TradData> = {
+  en,
+  es,
+};
+
+const plugin = {
+  register(app: AppLike): void {
     app.customFields.register({
       name: 'encrypted-text',
       pluginId: 'encrypted-field',
@@ -10,7 +30,8 @@ export default {
       },
       intlDescription: {
         id: 'encrypted-field.description',
-        defaultMessage: 'Campo de texto que se cifra automáticamente con AES-256-GCM',
+        defaultMessage:
+          'Campo de texto que se cifra automáticamente con AES-256-GCM',
       },
       components: {
         Input: async () => import('./components/Input').then((module) => ({
@@ -102,25 +123,14 @@ export default {
     });
   },
 
-  async registerTrads({ locales }) {
-    const importedTrads = await Promise.all(
-      locales.map((locale) => {
-        return import(`./translations/${locale}.json`)
-          .then(({ default: data }) => {
-            return {
-              data,
-              locale,
-            };
-          })
-          .catch(() => {
-            return {
-              data: {},
-              locale,
-            };
-          });
-      })
-    );
-
-    return Promise.resolve(importedTrads);
+  async registerTrads({ locales }: RegisterTradsArgs): Promise<
+    Array<{ data: TradData; locale: string }>
+  > {
+    return locales.map((locale) => ({
+      data: TRANSLATIONS[locale] ?? {},
+      locale,
+    }));
   },
 };
+
+export default plugin;
