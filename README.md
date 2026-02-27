@@ -6,28 +6,22 @@
   <img src="https://img.shields.io/badge/Strapi-v5-blueviolet" alt="Strapi v5" />
 </div>
 
----
+Official **Growy AI** plugin for Strapi that provides a custom encrypted text field using AES-256-GCM. Protect sensitive information directly in your database with transparent encryption and robust validation.
 
-### [English](#english-version) | [Español](#versión-en-español)
+- ✅ **Custom field** "Encrypted Text" in the Content-Type Builder
+- ✅ **Automatic encryption** AES-256-GCM on save
+- ✅ **Transparent decryption** on read (admin panel and API)
+- ✅ **Backend validation** with regex and length constraint support
+- ✅ **Native Strapi v5 UI** with visibility controls, resizable inputs and copy to clipboard
+- ✅ **Values hidden** by default with show/hide toggle
+- ✅ **Copy notifications** confirmation when copying values
+- ✅ **Multi-language support (i18n)**: English and Spanish
+- ✅ **Robust key management** with validation and clear error messages
+- ✅ **Encrypted data** in database with unique IV and Auth Tag per operation
+- ✅ **Reusable** in any collection or component
+- ✅ **Full support** for nested components and complex structures
 
----
-
-## English Version
-
-Official **Growy AI** plugin for Strapi that provide a custom encrypted text field using AES-256-GCM. Protect sensitive information directly in your database with transparent encryption and robust validation.
-
-### Features
-
-- ✅ **Custom Field** "Encrypted Text" in the Content-Type Builder.
-- ✅ **Automatic Encryption** AES-256-GCM when saving.
-- ✅ **Transparent Decryption** when reading (Admin panel and API).
-- ✅ **Backend Validation** with regex support and length constraints.
-- ✅ **Native Strapi v5 UI** with visibility controls, redimensionable inputs and copy to clipboard.
-- ✅ **Multi-language support (i18n)**: English and Spanish.
-- ✅ **Encrypted Data** in database with unique IV and Auth Tag.
-- ✅ **Nested Components support** at any depth.
-
-### Installation
+## Installation
 
 ```bash
 npm install @growy/strapi-plugin-encrypted-field
@@ -35,10 +29,12 @@ npm install @growy/strapi-plugin-encrypted-field
 yarn add @growy/strapi-plugin-encrypted-field
 ```
 
-### Configuration
+## Configuration
 
-#### 1. Enable the plugin
-Edit `config/plugins.js` or `config/plugins.ts`:
+### 1. Enable the plugin
+
+Create or edit `config/plugins.js` or `config/plugins.ts`:
+
 ```javascript
 module.exports = {
   'encrypted-field': {
@@ -47,140 +43,200 @@ module.exports = {
 };
 ```
 
-#### 2. Configure Encryption Key (REQUIRED)
+### 2. Configure the encryption key (REQUIRED)
+
+#### Option A: Environment variable (recommended)
+
 Add to your `.env`:
+
 ```bash
 ENCRYPTION_KEY=your_64_character_hex_key_here
 ```
 
-**Generate a secure key:**
+#### Option B: Configuration file
+
+Edit `config/plugins.js`:
+
+```javascript
+module.exports = ({ env }) => ({
+  'encrypted-field': {
+    enabled: true,
+    config: {
+      encryptionKey: env('ENCRYPTION_KEY'),
+    },
+  },
+});
+```
+
+#### Generate a secure key
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
+This will generate a 64-character hexadecimal key (32 bytes).
+
 ⚠️ **CRITICAL - Key Management**:
-- **Store the key safely** (Secrets manager, encrypted env vars).
-- **Never** include it in version control.
-- **If you lose the key**, you will NOT be able to decrypt existing data.
-- **Use the same key** across all environments sharing the same database.
+- **Store the key securely** (secrets manager, encrypted environment variables)
+- **Never** include it in version control
+- **If you lose the key**, you will not be able to decrypt existing data
+- **Use the same key** across all environments sharing the same database
+- **For production**, consider services like AWS Secrets Manager, HashiCorp Vault or similar
 
-### Usage & Validation
+### 3. Rebuild the admin
 
-#### Data Validation
-The plugin supports validation before encryption:
-1. In Content-Type Builder, select the encrypted field.
-2. Go to **"Advanced Settings"**.
-3. In **"RegEx pattern"**, enter your regular expression.
-**Example**: To validate an API key format: `^sk-[a-zA-Z0-9]{32}$`.
-
-#### API Usage
-The API returns decrypted values automatically for authorized requests.
 ```bash
-# Create an entry
+npm run build
+npm run develop
+```
+
+## Requirements
+
+- **Strapi**: v5.0.0 or higher
+- **Node.js**: 18.x - 22.x
+- **npm**: 6.0.0 or higher
+
+## Data Validation
+
+The plugin supports validation before encryption:
+
+### Configure regex validation
+
+1. In Content-Type Builder, select the encrypted field
+2. Go to the **"Advanced Settings"** tab
+3. In **"RegEx pattern"**, enter your regular expression
+4. Save the changes
+
+**Example**: To validate API key format:
+```regex
+^sk-[a-zA-Z0-9]{32}$
+```
+
+If the value does not match the pattern, an error will be thrown before encryption.
+
+## Usage
+
+### 1. Add an encrypted field to a collection
+
+1. Go to **Content-Type Builder**
+2. Select a collection or create a new one
+3. Click **"Add another field"**
+4. Search for **"Encrypted Text"** (with 🔒 icon)
+5. Set the field name
+6. Save and restart Strapi
+
+### 2. Using the field
+
+The field works like a regular text field with additional security features:
+
+- **In the panel**: Type text normally
+- **Hidden values**: Values are shown as `***` by default
+- **Eye button**: Toggles between show/hide the value
+- **Copy button**: Copies the value to clipboard with a confirmation notification
+- **On save**: Automatically encrypted
+- **On read**: Automatically decrypted
+- **In the DB**: Stored encrypted with format `iv:authTag:encrypted`
+- **In components**: Works the same in nested components at any depth
+
+### 3. API Usage
+
+```bash
+# Create with an encrypted field
 curl -X POST http://localhost:1337/api/users \
   -H "Content-Type: application/json" \
-  -d '{"data": {"apiKey": "my-secret-token"}}'
+  -d '{
+    "data": {
+      "name": "John",
+      "apiKey": "my-secret-key-123"
+    }
+  }'
 
 # Read (returns decrypted)
 curl -X GET http://localhost:1337/api/users/1
-# Response: { "data": { "apiKey": "my-secret-token" } }
+# Response: { "name": "John", "apiKey": "my-secret-key-123" }
 ```
 
----
+## Usage Example
 
-## Versión en Español
+### "User" collection with an encrypted API Key
 
-Plugin oficial de **Growy AI** para Strapi que proporciona un campo personalizado de texto cifrado con AES-256-GCM. Protege información sensible directamente en tu base de datos con cifrado transparente y validación robusta.
-
-### Características
-
-- ✅ **Campo personalizado** "Texto Cifrado" en el Content-Type Builder.
-- ✅ **Cifrado automático** AES-256-GCM al guardar.
-- ✅ **Descifrado transparente** al leer (panel y API).
-- ✅ **Validación backend** con soporte para regex y restricciones.
-- ✅ **UI Nativa Strapi v5** con controles de visibilidad, inputs redimensionables y copiar al portapapeles.
-- ✅ **Soporte multi-idioma (i18n)**: Inglés y Español.
-- ✅ **Datos cifrados** en base de datos con IV único y Auth Tag.
-- ✅ **Soporte para componentes anidados** a cualquier profundidad.
-
-### Instalación
-
-```bash
-npm install @growy/strapi-plugin-encrypted-field
-# o
-yarn add @growy/strapi-plugin-encrypted-field
+**Schema:**
+```json
+{
+  "name": "string",
+  "email": "email",
+  "apiKey": "plugin::encrypted-field.encrypted-text"
+}
 ```
 
-### Configuración
-
-#### 1. Habilitar el plugin
-Edita `config/plugins.js`:
-```javascript
-module.exports = {
-  'encrypted-field': {
-    enabled: true,
-  },
-};
+**In the DB:**
+```
+apiKey: "a1b2c3d4e5f6....:f9e8d7c6b5a4....:9f8e7d6c5b4a3..."
 ```
 
-#### 2. Configurar la clave (REQUERIDO)
-Agrega a tu `.env`:
-```bash
-ENCRYPTION_KEY=tu_clave_de_64_caracteres_hexadecimales_aqui
+**In the panel and API:**
+```
+apiKey: "sk-1234567890abcdef"
 ```
 
-⚠️ **CRÍTICO - Gestión de claves**:
-- **Guarda la clave de forma segura** (gestor de secretos, variables de entorno cifradas).
-- **Nunca** la incluyas en el control de versiones.
-- **Si pierdes la clave**, NO podrás descifrar los datos existentes.
+## Security & Architecture
 
-### Uso y Validación
+### Technical Specifications
 
-#### Validación de datos
-El plugin soporta validación antes del cifrado:
-1. En el Content-Type Builder, selecciona el campo cifrado.
-2. Ve a la pestaña **"Advanced Settings"**.
-3. En **"RegEx pattern"**, ingresa tu expresión regular.
-**Ejemplo**: Para validar formato de API key: `^sk-[a-zA-Z0-9]{32}$`.
+- **Algorithm**: AES-256-GCM (NIST standard, military grade)
+- **Key size**: 256 bits (32 bytes, 64 hex characters)
+- **IV (Initialization Vector)**: 96 bits (12 bytes) randomly generated per operation
+- **Auth Tag**: 128 bits (16 bytes) for integrity verification
+- **Stored format**: `iv:authTag:encryptedData` (all in hexadecimal)
+- **Key caching**: Encryption key is parsed and cached in memory for optimal performance
 
-#### Uso por API
-La API devuelve los valores descifrados automáticamente.
-```bash
-# Crear con campo cifrado
-curl -X POST http://localhost:1337/api/usuarios \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"apiKey": "mi-clave-secreta-123"}}'
+### Security Features
 
-# Leer (devuelve descifrado)
-curl -X GET http://localhost:1337/api/usuarios/1
-# Response: { "apiKey": "mi-clave-secreta-123" }
-```
+- ✅ **Authenticated encryption**: GCM provides both confidentiality and integrity
+- ✅ **Unique IV**: Every encryption operation generates a random IV
+- ✅ **Tamper resistance**: Auth Tag detects any modification
+- ✅ **Input validation**: Regex and custom constraints supported
+- ✅ **Safe error handling**: Controlled logs without exposing sensitive data
+- ✅ **Double-layer decryption**: Lifecycle hooks (internal) + middleware (API responses)
 
-### Especificaciones Técnicas
+### Best Practices
 
-- **Algoritmo**: AES-256-GCM (Grado militar).
-- **IV (Initialization Vector)**: 96 bits generado aleatoriamente por operación.
-- **Integridad**: Auth Tag de 128 bits para detectar manipulaciones.
-- **Formato almacenado**: `iv:authTag:encryptedData`.
+1. **Key rotation**: Plan a periodic rotation process
+2. **Environment separation**: Use different keys per dev/staging/prod
+3. **Auditing**: Monitor encryption/decryption error logs
+4. **Key backup**: Keep secure copies of keys in multiple locations
+5. **Private fields**: Mark sensitive fields as "private" to exclude them from the public API
 
-### Limitaciones Conocidas
+## Use Cases
 
-- ❌ **Búsqueda**: No se puede buscar por campos cifrados debido al cifrado en BD.
-- ❌ **Ordenamiento**: No se puede ordenar por campos cifrados.
-- ❌ **Filtros**: No se pueden aplicar filtros directos en la consulta a la BD.
+- 🔑 Third-party API Keys
+- 🔐 Access tokens
+- 🔒 Webhook secrets
+- 💳 Sensitive information
+- 📧 SMTP credentials
+- 🔑 Application passwords
 
----
+## Known Limitations
 
-## License / Licencia
+- ❌ **Search**: Cannot search by encrypted fields (data is encrypted in DB)
+- ❌ **Sorting**: Cannot sort by encrypted fields
+- ❌ **Filters**: Cannot apply direct filters on encrypted fields
+- ⚠️ **Performance**: Encryption/decryption adds minimal overhead (~1-2ms per operation)
+- ⚠️ **Key synchronization**: All environments sharing the same DB must use the same key
+
+## License
+
 MIT © 2025 Growy AI
 
-## Credits / Créditos
-**Growy AI** - Soluciones de IA y automatización empresarial
-**Main Author / Autor principal**: Zahir El isaac
+## Developed by
+
+**Growy AI** - AI and business automation solutions
+
+**Main author**: Zahir El isaac
 
 ---
 
 <div align="center">
-  <p>If this plugin is useful to you, consider giving it a ⭐ on GitHub / Si este plugin te resulta útil, considera darle una ⭐ en GitHub</p>
-  <p>Made with ❤️ by Growy AI Team</p>
+  <p>If this plugin is useful to you, consider giving it a ⭐ on GitHub</p>
+  <p>Made with ❤️ by the Growy AI team</p>
 </div>
