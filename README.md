@@ -201,11 +201,21 @@ apiKey: "sk-1234567890abcdef"
 
 ### Best Practices
 
-1. **Key rotation**: Plan a periodic rotation process
+1. **Key rotation**: Use the included rotation script (see below)
 2. **Environment separation**: Use different keys per dev/staging/prod
 3. **Auditing**: Monitor encryption/decryption error logs
 4. **Key backup**: Keep secure copies of keys in multiple locations
 5. **Private fields**: Mark sensitive fields as "private" to exclude them from the public API
+
+### Key Rotation
+
+If you need to change your encryption key, use the included rotation script to re-encrypt existing data:
+
+```bash
+node scripts/rotate-key.js --old=<CURRENT_64_CHAR_KEY> --new=<NEW_64_CHAR_KEY>
+```
+
+The script reads encrypted values from stdin, decrypts with the old key, and re-encrypts with the new key. See the script output for database-specific integration examples (PostgreSQL, etc.).
 
 ## Use Cases
 
@@ -221,6 +231,7 @@ apiKey: "sk-1234567890abcdef"
 - ❌ **Search**: Cannot search by encrypted fields (data is encrypted in DB)
 - ❌ **Sorting**: Cannot sort by encrypted fields
 - ❌ **Filters**: Cannot apply direct filters on encrypted fields
+- ❌ **Unique constraint**: Strapi's unique validation will not work correctly on encrypted fields because each encryption produces a different ciphertext (random IV)
 - ⚠️ **Performance**: Encryption/decryption adds minimal overhead (~1-2ms per operation)
 - ⚠️ **Key synchronization**: All environments sharing the same DB must use the same key
 

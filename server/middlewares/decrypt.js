@@ -50,7 +50,7 @@ module.exports = (config, { strapi }) => {
             try {
               obj[key] = decrypt(obj[key], strapi);
             } catch (error) {
-              strapi.log.error(`Error descifrando campo ${key}: ${error.message}`);
+              strapi.log.error(`Decryption error on field ${key}: ${error.message}`);
             }
           }
         }

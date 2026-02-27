@@ -17,7 +17,7 @@ function processEncryption(event, strapi) {
 
     const validation = validateValue(value, attribute);
     if (!validation.valid) {
-      throw new Error(`Validación fallida para el campo "${key}": ${validation.error}`);
+      throw new Error(`Validation failed for field "${key}": ${validation.error}`);
     }
 
     data[key] = encrypt(value, strapi);

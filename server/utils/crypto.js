@@ -9,10 +9,10 @@ let _cachedKey = null;
 let _cachedKeySource = null;
 
 function getEncryptionKey(strapi) {
-  const key = process.env.ENCRYPTION_KEY || strapi?.config?.get('plugin.encrypted-field.encryptionKey');
+  const key = process.env.ENCRYPTION_KEY || strapi?.config?.get('plugin::encrypted-field.encryptionKey');
 
   if (!key) {
-    const errorMsg = '⚠️  ENCRYPTION_KEY no configurada. Debe establecer una clave de 64 caracteres hexadecimales en las variables de entorno o configuración de Strapi.';
+    const errorMsg = '⚠️  ENCRYPTION_KEY not configured. You must set a 64-character hexadecimal key in environment variables or Strapi configuration.';
     if (strapi?.log?.error) {
       strapi.log.error(errorMsg);
     }
@@ -24,11 +24,11 @@ function getEncryptionKey(strapi) {
   }
 
   if (typeof key !== 'string' || key.length !== 64) {
-    throw new Error(`ENCRYPTION_KEY debe tener exactamente 64 caracteres hexadecimales (32 bytes). Actual: ${key?.length || 0}`);
+    throw new Error(`ENCRYPTION_KEY must be exactly 64 hexadecimal characters (32 bytes). Current: ${key?.length || 0}`);
   }
 
   if (!/^[0-9a-fA-F]{64}$/.test(key)) {
-    throw new Error('ENCRYPTION_KEY debe contener solo caracteres hexadecimales (0-9, a-f, A-F)');
+    throw new Error('ENCRYPTION_KEY must contain only hexadecimal characters (0-9, a-f, A-F)');
   }
 
   _cachedKey = Buffer.from(key, 'hex');
@@ -54,7 +54,7 @@ function encrypt(text, strapi) {
     return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
   } catch (error) {
     if (strapi?.log?.error) {
-      strapi.log.error(`Error al cifrar: ${error.message}`);
+      strapi.log.error(`Encryption error: ${error.message}`);
     }
     throw error;
   }
@@ -88,7 +88,7 @@ function decrypt(encryptedText, strapi) {
     return decrypted;
   } catch (error) {
     if (strapi?.log?.debug) {
-      strapi.log.debug(`Error al descifrar: ${error.message}. Retornando texto original.`);
+      strapi.log.debug(`Decryption error: ${error.message}. Returning original text.`);
     }
     return encryptedText;
   }
@@ -102,7 +102,7 @@ function validateValue(value, attribute) {
   if (typeof value !== 'string') {
     return {
       valid: false,
-      error: 'El valor debe ser una cadena de texto'
+      error: 'Value must be a string'
     };
   }
 
@@ -112,13 +112,13 @@ function validateValue(value, attribute) {
       if (!regex.test(value)) {
         return {
           valid: false,
-          error: `El valor no cumple con el patrón de validación: ${attribute.regex}`
+          error: `Value does not match the validation pattern: ${attribute.regex}`
         };
       }
     } catch (error) {
       return {
         valid: false,
-        error: `Patrón regex inválido: ${error.message}`
+        error: `Invalid regex pattern: ${error.message}`
       };
     }
   }
@@ -126,14 +126,14 @@ function validateValue(value, attribute) {
   if (attribute.maxLength && value.length > attribute.maxLength) {
     return {
       valid: false,
-      error: `El valor excede la longitud máxima de ${attribute.maxLength} caracteres`
+      error: `Value exceeds maximum length of ${attribute.maxLength} characters`
     };
   }
 
   if (attribute.minLength && value.length < attribute.minLength) {
     return {
       valid: false,
-      error: `El valor debe tener al menos ${attribute.minLength} caracteres`
+      error: `Value must be at least ${attribute.minLength} characters`
     };
   }
 

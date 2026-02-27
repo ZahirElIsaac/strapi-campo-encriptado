@@ -1,11 +1,11 @@
 {
   "name": "@growy/strapi-plugin-encrypted-field",
-  "version": "2.3.3",
-  "description": "Campo personalizado de texto cifrado para Strapi",
+  "version": "2.4.0",
+  "description": "Custom encrypted text field plugin for Strapi using AES-256-GCM",
   "strapi": {
     "name": "encrypted-field",
     "displayName": "Encrypted Field",
-    "description": "Agrega un campo de texto cifrado con AES-256-GCM",
+    "description": "Adds an AES-256-GCM encrypted text field",
     "kind": "plugin"
   },
   "dependencies": {},
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ZahirElIsaac/strapi-campo-encriptado.git"
+    "url": "git+https://github.com/ZahirElIsaac/strapi-campo-encriptado.git"
   },
   "contributors": [
     {
