@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.1] - 2026-02-26
+
+### Changed
+- Updated Node.js engine requirement to support version 23.x.x.
+
 ## [2.4.0] - 2026-02-26
 
 ### Added
