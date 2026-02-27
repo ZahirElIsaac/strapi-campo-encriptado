@@ -103,24 +103,15 @@ export default {
   },
 
   async registerTrads({ locales }) {
-    const importedTrads = await Promise.all(
-      locales.map((locale) => {
-        return import(`./translations/${locale}.json`)
-          .then(({ default: data }) => {
-            return {
-              data,
-              locale,
-            };
-          })
-          .catch(() => {
-            return {
-              data: {},
-              locale,
-            };
-          });
+    return Promise.all(
+      locales.map(async (locale) => {
+        try {
+          const { default: data } = await import(`./translations/${locale}.json`);
+          return { data, locale };
+        } catch {
+          return { data: {}, locale };
+        }
       })
     );
-
-    return Promise.resolve(importedTrads);
   },
 };

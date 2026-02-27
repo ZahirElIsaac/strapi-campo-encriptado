@@ -34,28 +34,44 @@ const Input = (props) => {
   };
 
   const handleCopy = async () => {
-    if (value) {
-      try {
-        await navigator.clipboard.writeText(value);
-        toggleNotification({
-          type: 'success',
-          message: 'Copiado al portapapeles',
-        });
-      } catch (err) {
-        toggleNotification({
-          type: 'danger',
-          message: 'Error al copiar',
-        });
-      }
+    if (!value) return;
+
+    try {
+      await navigator.clipboard.writeText(value);
+      toggleNotification({
+        type: 'success',
+        message: formatMessage({
+          id: 'encrypted-field.notification.copied',
+          defaultMessage: 'Copiado al portapapeles',
+        }),
+      });
+    } catch (err) {
+      toggleNotification({
+        type: 'danger',
+        message: formatMessage({
+          id: 'encrypted-field.notification.copyError',
+          defaultMessage: 'Error al copiar',
+        }),
+      });
     }
   };
 
   const toggleVisibility = () => {
-    setIsVisible(!isVisible);
+    setIsVisible((prev) => !prev);
   };
 
   const fieldName = name.includes('.') ? name.split('.').pop() : name;
   const label = intlLabel?.id ? formatMessage(intlLabel) : (intlLabel || fieldName);
+
+  const visibilityLabel = formatMessage({
+    id: isVisible ? 'encrypted-field.action.hide' : 'encrypted-field.action.show',
+    defaultMessage: isVisible ? 'Ocultar' : 'Mostrar',
+  });
+
+  const copyLabel = formatMessage({
+    id: 'encrypted-field.action.copy',
+    defaultMessage: 'Copiar',
+  });
 
   return (
     <Field.Root
@@ -77,17 +93,17 @@ const Input = (props) => {
           disabled={disabled}
           style={{ paddingRight: '80px' }}
         />
-        <div style={{ 
-          position: 'absolute', 
-          right: '8px', 
-          top: '50%', 
+        <div style={{
+          position: 'absolute',
+          right: '8px',
+          top: '50%',
           transform: 'translateY(-50%)',
           display: 'flex',
-          gap: '4px'
+          gap: '4px',
         }}>
           <IconButton
             onClick={toggleVisibility}
-            label={isVisible ? 'Ocultar' : 'Mostrar'}
+            label={visibilityLabel}
             disabled={disabled}
             variant="ghost"
           >
@@ -95,7 +111,7 @@ const Input = (props) => {
           </IconButton>
           <IconButton
             onClick={handleCopy}
-            label="Copiar"
+            label={copyLabel}
             disabled={disabled || !value}
             variant="ghost"
           >

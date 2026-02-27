@@ -5,6 +5,10 @@ const decrypt = require('./middlewares/decrypt');
 module.exports = {
   register,
   bootstrap,
+  config: {
+    default: {},
+    validator: () => { },
+  },
   middlewares: {
     decrypt,
   },

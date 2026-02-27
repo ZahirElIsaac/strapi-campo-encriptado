@@ -13,5 +13,10 @@
   "encrypted-field.options.minLength.description": "Número mínimo de caracteres requeridos",
   "encrypted-field.options.advanced.regex": "Validación",
   "encrypted-field.options.regex.label": "RegEx pattern",
-  "encrypted-field.options.regex.description": "Patrón de validación antes de cifrar"
+  "encrypted-field.options.regex.description": "Patrón de validación antes de cifrar",
+  "encrypted-field.notification.copied": "Copiado al portapapeles",
+  "encrypted-field.notification.copyError": "Error al copiar al portapapeles",
+  "encrypted-field.action.show": "Mostrar",
+  "encrypted-field.action.hide": "Ocultar",
+  "encrypted-field.action.copy": "Copiar"
 }

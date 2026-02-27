@@ -13,5 +13,10 @@
   "encrypted-field.options.minLength.description": "Minimum number of characters required",
   "encrypted-field.options.advanced.regex": "Validation",
   "encrypted-field.options.regex.label": "RegEx pattern",
-  "encrypted-field.options.regex.description": "Validation pattern before encryption"
+  "encrypted-field.options.regex.description": "Validation pattern before encryption",
+  "encrypted-field.notification.copied": "Copied to clipboard",
+  "encrypted-field.notification.copyError": "Error copying to clipboard",
+  "encrypted-field.action.show": "Show",
+  "encrypted-field.action.hide": "Hide",
+  "encrypted-field.action.copy": "Copy"
 }
