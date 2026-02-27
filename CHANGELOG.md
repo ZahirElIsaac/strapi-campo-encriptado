@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.3] - 2026-02-26
+
+### Changed
+- README full consistency review: Node.js requirement corrected to 23.x, redundant feature bullets consolidated, Option B clarified, rebuild step scoped to first install only, Key Rotation guide expanded with multi-line command for readability.
+
 ## [2.4.2] - 2026-02-26
 
 ### Changed

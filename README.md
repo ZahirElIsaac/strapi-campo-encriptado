@@ -12,14 +12,19 @@ Official **Growy AI** plugin for Strapi that provides a custom encrypted text fi
 - ✅ **Automatic encryption** AES-256-GCM on save
 - ✅ **Transparent decryption** on read (admin panel and API)
 - ✅ **Backend validation** with regex and length constraint support
-- ✅ **Native Strapi v5 UI** with visibility controls, resizable inputs and copy to clipboard
-- ✅ **Values hidden** by default with show/hide toggle
-- ✅ **Copy notifications** confirmation when copying values
-- ✅ **Multi-language support (i18n)**: English and Spanish
+- ✅ **Admin UI** with show/hide toggle, resizable inputs and copy to clipboard
+- ✅ **Copy notifications** with confirmation toast when copying values
+- ✅ **Multi-language support (i18n)**: English and Spanish in the admin panel
 - ✅ **Robust key management** with validation and clear error messages
 - ✅ **Encrypted data** in database with unique IV and Auth Tag per operation
 - ✅ **Reusable** in any collection or component
 - ✅ **Full support** for nested components and complex structures
+
+## Requirements
+
+- **Strapi**: v5.0.0 or higher
+- **Node.js**: 18.x - 23.x
+- **npm**: 6.0.0 or higher
 
 ## Installation
 
@@ -55,14 +60,14 @@ ENCRYPTION_KEY=your_64_character_hex_key_here
 
 #### Option B: Configuration file
 
-Edit `config/plugins.js`:
+Use this option if you need to read the key from a different environment variable name or from a secrets provider:
 
 ```javascript
 module.exports = ({ env }) => ({
   'encrypted-field': {
     enabled: true,
     config: {
-      encryptionKey: env('ENCRYPTION_KEY'),
+      encryptionKey: env('MY_CUSTOM_SECRET_KEY'),
     },
   },
 });
@@ -70,11 +75,13 @@ module.exports = ({ env }) => ({
 
 #### Generate a secure key
 
+Run this command once to generate a valid key:
+
 ```bash
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-This will generate a 64-character hexadecimal key (32 bytes).
+This outputs a 64-character hexadecimal key (32 bytes) ready to use.
 
 ⚠️ **CRITICAL - Key Management**:
 - **Store the key securely** (secrets manager, encrypted environment variables)
@@ -83,36 +90,14 @@ This will generate a 64-character hexadecimal key (32 bytes).
 - **Use the same key** across all environments sharing the same database
 - **For production**, consider services like AWS Secrets Manager, HashiCorp Vault or similar
 
-### 3. Rebuild the admin
+### 3. Rebuild the admin panel (first install only)
+
+After installing the plugin for the first time, rebuild the admin panel:
 
 ```bash
 npm run build
 npm run develop
 ```
-
-## Requirements
-
-- **Strapi**: v5.0.0 or higher
-- **Node.js**: 18.x - 22.x
-- **npm**: 6.0.0 or higher
-
-## Data Validation
-
-The plugin supports validation before encryption:
-
-### Configure regex validation
-
-1. In Content-Type Builder, select the encrypted field
-2. Go to the **"Advanced Settings"** tab
-3. In **"RegEx pattern"**, enter your regular expression
-4. Save the changes
-
-**Example**: To validate API key format:
-```regex
-^sk-[a-zA-Z0-9]{32}$
-```
-
-If the value does not match the pattern, an error will be thrown before encryption.
 
 ## Usage
 
@@ -125,23 +110,24 @@ If the value does not match the pattern, an error will be thrown before encrypti
 5. Set the field name
 6. Save and restart Strapi
 
-### 2. Using the field
+### 2. Using the field in the admin panel
 
 The field works like a regular text field with additional security features:
 
-- **In the panel**: Type text normally
-- **Hidden values**: Values are shown as `***` by default
+- **Values are hidden** by default (shown as `***`)
 - **Eye button**: Toggles between show/hide the value
 - **Copy button**: Copies the value to clipboard with a confirmation notification
-- **On save**: Automatically encrypted
-- **On read**: Automatically decrypted
-- **In the DB**: Stored encrypted with format `iv:authTag:encrypted`
+- **On save**: Value is automatically encrypted before storing
+- **On read**: Value is automatically decrypted before displaying
+- **In the DB**: Stored as `iv:authTag:encryptedText` (unreadable without the key)
 - **In components**: Works the same in nested components at any depth
 
 ### 3. API Usage
 
+The API always returns **decrypted** values for authorized requests. You write plain text, the plugin handles encryption transparently.
+
 ```bash
-# Create with an encrypted field
+# Create an entry with an encrypted field
 curl -X POST http://localhost:1337/api/users \
   -H "Content-Type: application/json" \
   -d '{
@@ -151,9 +137,25 @@ curl -X POST http://localhost:1337/api/users \
     }
   }'
 
-# Read (returns decrypted)
+# Read (automatically returns decrypted)
 curl -X GET http://localhost:1337/api/users/1
 # Response: { "name": "John", "apiKey": "my-secret-key-123" }
+```
+
+## Data Validation
+
+The plugin supports validation before encryption. If validation fails, the value is rejected before being encrypted or saved.
+
+### Configure regex validation
+
+1. In Content-Type Builder, select the encrypted field
+2. Go to the **"Advanced Settings"** tab
+3. In **"RegEx pattern"**, enter your regular expression
+4. Save the changes
+
+**Example**: To only accept values that look like an API key:
+```regex
+^sk-[a-zA-Z0-9]{32}$
 ```
 
 ## Usage Example
@@ -169,12 +171,12 @@ curl -X GET http://localhost:1337/api/users/1
 }
 ```
 
-**In the DB:**
+**What gets stored in the DB:**
 ```
 apiKey: "a1b2c3d4e5f6....:f9e8d7c6b5a4....:9f8e7d6c5b4a3..."
 ```
 
-**In the panel and API:**
+**What the admin panel and API show:**
 ```
 apiKey: "sk-1234567890abcdef"
 ```
@@ -194,14 +196,14 @@ apiKey: "sk-1234567890abcdef"
 
 - ✅ **Authenticated encryption**: GCM provides both confidentiality and integrity
 - ✅ **Unique IV**: Every encryption operation generates a random IV
-- ✅ **Tamper resistance**: Auth Tag detects any modification
+- ✅ **Tamper resistance**: Auth Tag detects any modification to the ciphertext
 - ✅ **Input validation**: Regex and custom constraints supported
 - ✅ **Safe error handling**: Controlled logs without exposing sensitive data
 - ✅ **Double-layer decryption**: Lifecycle hooks (internal) + middleware (API responses)
 
 ### Best Practices
 
-1. **Key rotation**: Use the included rotation script (see below)
+1. **Key rotation**: Use the included rotation script when changing keys (see below)
 2. **Environment separation**: Use different keys per dev/staging/prod
 3. **Auditing**: Monitor encryption/decryption error logs
 4. **Key backup**: Keep secure copies of keys in multiple locations
@@ -209,30 +211,31 @@ apiKey: "sk-1234567890abcdef"
 
 ### Key Rotation (Preventing Data Loss)
 
-⚠️ **IMPORTANT**: If you change `ENCRYPTION_KEY` in your `.env` without re-encrypting your data first, **all existing data will become unreadable**.
+⚠️ **IMPORTANT**: If you change `ENCRYPTION_KEY` in your `.env` without re-encrypting your data first, **all existing data will become permanently unreadable**.
 
-#### Safe Rotation Process:
+Follow this safe process to rotate your key:
 
-1. **Keep your OLD key** accessible for a moment.
+1. **Keep your OLD key** — do not remove it yet.
 2. **Generate a NEW key** (64-character hexadecimal).
 3. **Export the encrypted values** from your database.
 4. **Run the rotation script** included in this plugin:
    ```bash
-   # From your project root
-   node node_modules/@growy/strapi-plugin-encrypted-field/scripts/rotate-key.js --old=<OLD_KEY> --new=<NEW_KEY>
+   # From your Strapi project root
+   node node_modules/@growy/strapi-plugin-encrypted-field/scripts/rotate-key.js \
+     --old=<YOUR_CURRENT_64_CHAR_KEY> \
+     --new=<YOUR_NEW_64_CHAR_KEY>
    ```
-5. **Update your database** with the new encrypted values returned by the script.
-6. **Update your `.env`** with the `NEW_KEY`.
+   The script reads encrypted values from stdin, decrypts with the old key, and re-encrypts with the new key, writing the results to stdout.
+5. **Update your database** with the new encrypted values output by the script.
+6. **Update your `.env`** with the `NEW_KEY` and remove the old one.
 7. **Restart Strapi**.
-
-The script works as a pipe (stdin to stdout). See the script output or documentation for database-specific integration examples (e.g., PostgreSQL loops).
 
 ## Use Cases
 
 - 🔑 Third-party API Keys
 - 🔐 Access tokens
 - 🔒 Webhook secrets
-- 💳 Sensitive information
+- 💳 Payment or sensitive information
 - 📧 SMTP credentials
 - 🔑 Application passwords
 
@@ -241,7 +244,7 @@ The script works as a pipe (stdin to stdout). See the script output or documenta
 - ❌ **Search**: Cannot search by encrypted fields (data is encrypted in DB)
 - ❌ **Sorting**: Cannot sort by encrypted fields
 - ❌ **Filters**: Cannot apply direct filters on encrypted fields
-- ❌ **Unique constraint**: Strapi's unique validation will not work correctly on encrypted fields because each encryption produces a different ciphertext (random IV)
+- ❌ **Unique constraint**: Strapi's unique validation will not work correctly on encrypted fields because each encryption produces different ciphertext (random IV)
 - ⚠️ **Performance**: Encryption/decryption adds minimal overhead (~1-2ms per operation)
 - ⚠️ **Key synchronization**: All environments sharing the same DB must use the same key
 

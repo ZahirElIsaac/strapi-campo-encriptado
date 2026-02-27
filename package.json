@@ -1,6 +1,6 @@
 {
   "name": "@growy/strapi-plugin-encrypted-field",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "description": "Custom encrypted text field plugin for Strapi using AES-256-GCM",
   "strapi": {
     "name": "encrypted-field",
