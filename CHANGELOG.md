@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.4.2] - 2026-02-26
+
+### Changed
+- Improved Key Rotation documentation with a detailed step-by-step foolproof guide to prevent data loss.
+
 ## [2.4.1] - 2026-02-26
 
 ### Changed

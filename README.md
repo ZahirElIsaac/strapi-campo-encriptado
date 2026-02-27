@@ -207,15 +207,25 @@ apiKey: "sk-1234567890abcdef"
 4. **Key backup**: Keep secure copies of keys in multiple locations
 5. **Private fields**: Mark sensitive fields as "private" to exclude them from the public API
 
-### Key Rotation
+### Key Rotation (Preventing Data Loss)
 
-If you need to change your encryption key, use the included rotation script to re-encrypt existing data:
+⚠️ **IMPORTANT**: If you change `ENCRYPTION_KEY` in your `.env` without re-encrypting your data first, **all existing data will become unreadable**.
 
-```bash
-node scripts/rotate-key.js --old=<CURRENT_64_CHAR_KEY> --new=<NEW_64_CHAR_KEY>
-```
+#### Safe Rotation Process:
 
-The script reads encrypted values from stdin, decrypts with the old key, and re-encrypts with the new key. See the script output for database-specific integration examples (PostgreSQL, etc.).
+1. **Keep your OLD key** accessible for a moment.
+2. **Generate a NEW key** (64-character hexadecimal).
+3. **Export the encrypted values** from your database.
+4. **Run the rotation script** included in this plugin:
+   ```bash
+   # From your project root
+   node node_modules/@growy/strapi-plugin-encrypted-field/scripts/rotate-key.js --old=<OLD_KEY> --new=<NEW_KEY>
+   ```
+5. **Update your database** with the new encrypted values returned by the script.
+6. **Update your `.env`** with the `NEW_KEY`.
+7. **Restart Strapi**.
+
+The script works as a pipe (stdin to stdout). See the script output or documentation for database-specific integration examples (e.g., PostgreSQL loops).
 
 ## Use Cases
 
